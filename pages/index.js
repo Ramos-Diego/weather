@@ -7,9 +7,9 @@ import {
   Container,
   Button,
   Input,
-  FormControl,
   Heading,
-  Flex,
+  Alert,
+  AlertIcon,
 } from '@chakra-ui/core'
 
 export default function Home() {
@@ -71,6 +71,12 @@ export default function Home() {
               ref={register({ required: true })}
               textAlign="center"
             />
+            {errors.city && (
+              <Alert h="36px" mt={2} status="error" borderRadius={3}>
+                <AlertIcon />
+                The city is required.
+              </Alert>
+            )}
             <Button type="submit" mt={6} isFullWidth>
               Get Temperature
             </Button>
