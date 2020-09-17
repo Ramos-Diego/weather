@@ -1,48 +1,82 @@
 import Head from 'next/head'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import {
+  Box,
+  VStack,
+  Container,
+  Button,
+  Input,
+  FormControl,
+  Heading,
+  Flex,
+} from '@chakra-ui/core'
 
 export default function Home() {
   const { handleSubmit, register, errors } = useForm()
-  const [city, setCity] = useState('')
-  const [temperature, setTemperature] = useState(0)
+  const [data, setData] = useState({})
 
-
-const apiKey = process.env.WEATHER_KEY
-console.log(apiKey)
-
-  const getWeather = async () => {
-    fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=London,uk&appid=${apiKey}`
-    )
+  const onSubmit = ({ city }) => {
+    fetch(`http://localhost:3000/api/?city=${city}`)
       .then((res) => res.json())
-      .then(({ name, main }) => {
-        setCity(name)
-        setTemperature(main.temp - 273.15)
+      .then((data) => {
+        if (data.success) {
+          setData(data)
+        }
       })
       .catch((err) => console.log(err))
   }
 
-  const onSubmit = values => console.log(values)
-
   return (
-    <>
+    <Box bgColor="lightskyblue">
       <Head>
         <title>Weather</title>
       </Head>
 
-      <div>
-        <p>City: {city}</p>
-        <div>Temperature: {temperature}C</div>
-        <form onSubmit={handleSubmit(onSubmit)}>
-        <input
-        name="city"
-        ref={register({required: true})}
-        />
-        <button>Submit</button>
-        </form>
-        <button onClick={() => getWeather()}>Weather</button>
-      </div>
-    </>
+      <Container display="grid" alignContent="center" maxW="xs" h="100vh">
+        <Heading
+          as="h2"
+          mb={5}
+          color="gray.800"
+          fontSize="3rem"
+          textAlign="center"
+        >
+          Weather App
+        </Heading>
+        <VStack spacing={2} bgColor="lightpink" p={3} borderRadius={4}>
+          <Box my="50px">
+            <Heading
+              as="h1"
+              color="gray.800"
+              fontSize="2rem"
+              textAlign="center"
+            >
+              {data.temperature ? (<>
+              {data.temperature}&deg;C
+              <br/>
+              {data.city}, {data.country}
+              <br/>
+              {data.description}
+              </>) : <>#&deg;C</>}
+            </Heading>
+          </Box>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Input
+              fontSize="xl"
+              name="city"
+              placeholder="Enter a city..."
+              _placeholder={{
+                fontSize: 'xl',
+              }}
+              ref={register({ required: true })}
+              textAlign="center"
+            />
+            <Button type="submit" mt={6} isFullWidth>
+              Get Temperature
+            </Button>
+          </form>
+        </VStack>
+      </Container>
+    </Box>
   )
 }
