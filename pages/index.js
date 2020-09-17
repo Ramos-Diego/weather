@@ -17,7 +17,7 @@ export default function Home() {
   const [data, setData] = useState({})
 
   const onSubmit = ({ city }) => {
-    fetch(`http://localhost:3000/api/?city=${city}`)
+    fetch(`/api/?city=${city}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
